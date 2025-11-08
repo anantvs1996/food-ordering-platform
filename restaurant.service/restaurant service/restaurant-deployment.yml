@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: restaurant-service-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: restaurant-service
+  template:
+    metadata:
+      labels:
+        app: restaurant-service
+    spec:
+      containers:
+        - name: restaurant-service
+          image: restaurant-service:0.0.1-SNAPSHOT
+          imagePullPolicy: Never  # Because we built inside Minikube
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres-service:5432/restaurantdb
+            - name: SPRING_DATASOURCE_USERNAME
+              value: restaurantuser
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: restaurantpass
+            - name: TZ
+              value: Asia/Kolkata
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: kafka:9092   # 👈 Points to your Kafka service inside K8s
